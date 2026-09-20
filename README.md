@@ -32,13 +32,6 @@ Sebelum memulai, pastikan kamu sudah memiliki:
 - Akses root/sudo di server target.
 
 > ⚠️ **Catatan:** Spesifikasi instance EC2 bebas (misal `t2.micro` untuk free tier sudah cukup untuk testing).
-
-> ⚠️ **Catatan kompatibilitas Ubuntu 26.04 LTS:** Ubuntu 26.04 ("Resolute Raccoon") sudah tersedia dan membawa **PHP 8.5** sebagai default, jauh lebih baru dibanding versi yang biasa digunakan tools monitoring lama. Sebelum deploy di 26.04, perhatikan:
-> - Cek isi `install.sh` untuk memastikan tidak ada referensi nama service versi lama (mis. `php7.4-fpm`, `php8.1-fpm`) — pada Ubuntu 26.04 nama service-nya adalah `php8.5-fpm`.
-> - Cek apakah aplikasi memakai fungsi PHP yang sudah *deprecated*/dihapus di PHP 8.5 (mis. fungsi `mysql_*` lama).
-> - Paket `php-json` sejak PHP 8.0 sudah menyatu ke core PHP, sehingga di 26.04 kemungkinan tidak lagi tersedia sebagai paket terpisah — jika `apt install` menolaknya, cukup hapus `php-json` dari daftar paket yang diinstal.
-> - Jika ingin kompatibilitas paling aman dan teruji untuk tools monitoring lawas, **Ubuntu 22.04 atau 24.04 LTS** (PHP 8.1 / 8.3) masih jadi pilihan yang lebih stabil dibanding 26.04.
-
 ---
 
 ## 1. Instalasi Paket yang Dibutuhkan
