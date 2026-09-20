@@ -25,13 +25,19 @@ Aplikasi ini akan menampilkan metrik real-time server seperti penggunaan **CPU**
 
 Sebelum memulai, pastikan kamu sudah memiliki:
 
-- Instance **EC2 Ubuntu** (versi 20.04 / 22.04 disarankan) yang sudah running.
+- Instance **EC2 Ubuntu** (versi 22.04 / 24.04 LTS disarankan) yang sudah running.
 - Akses **SSH** ke instance tersebut (via key pair `.pem`).
 - **Security Group** EC2 yang mengizinkan inbound traffic pada port `22` (SSH) dan `80` (HTTP).
-- Aplikasi **[WinSCP](https://winscp.net/)** (atau `scp`/`rsync`) terpasang di komputer lokal untuk transfer file.
+- **Git** terpasang di server untuk melakukan clone repository aplikasi.
 - Akses root/sudo di server target.
 
 > ⚠️ **Catatan:** Spesifikasi instance EC2 bebas (misal `t2.micro` untuk free tier sudah cukup untuk testing).
+
+> ⚠️ **Catatan kompatibilitas Ubuntu 26.04 LTS:** Ubuntu 26.04 ("Resolute Raccoon") sudah tersedia dan membawa **PHP 8.5** sebagai default, jauh lebih baru dibanding versi yang biasa digunakan tools monitoring lama. Sebelum deploy di 26.04, perhatikan:
+> - Cek isi `install.sh` untuk memastikan tidak ada referensi nama service versi lama (mis. `php7.4-fpm`, `php8.1-fpm`) — pada Ubuntu 26.04 nama service-nya adalah `php8.5-fpm`.
+> - Cek apakah aplikasi memakai fungsi PHP yang sudah *deprecated*/dihapus di PHP 8.5 (mis. fungsi `mysql_*` lama).
+> - Paket `php-json` sejak PHP 8.0 sudah menyatu ke core PHP, sehingga di 26.04 kemungkinan tidak lagi tersedia sebagai paket terpisah — jika `apt install` menolaknya, cukup hapus `php-json` dari daftar paket yang diinstal.
+> - Jika ingin kompatibilitas paling aman dan teruji untuk tools monitoring lawas, **Ubuntu 22.04 atau 24.04 LTS** (PHP 8.1 / 8.3) masih jadi pilihan yang lebih stabil dibanding 26.04.
 
 ---
 
@@ -76,25 +82,34 @@ apt install -y \
 
 ## 2. Upload File Aplikasi ke Server
 
-Gunakan **WinSCP** (atau tools sejenis seperti `scp`/`rsync`) untuk meng-extract dan menyalin seluruh file aplikasi ke direktori web root server:
+Ambil source code aplikasi langsung dari repository GitHub menggunakan `git clone`.
 
-```
-/var/www/html
-```
-
-**Alternatif via terminal (menggunakan `scp` dari komputer lokal):**
+Pastikan `git` sudah terpasang:
 
 ```bash
-scp -i your-key.pem -r ./monitoring-app/* ubuntu@IP-PUBLIC:/tmp/monitoring-app
+apt install -y git
 ```
 
-Lalu di sisi server, pindahkan ke `/var/www/html`:
+Bersihkan lebih dulu folder web root dari file default Apache (`index.html`) agar tidak konflik dengan file aplikasi:
 
 ```bash
-sudo mv /tmp/monitoring-app/* /var/www/html/
+rm -rf /var/www/html/*
 ```
 
-> 💡 **Tips:** Pastikan folder `/var/www/html` bersih dari file default Apache (`index.html`) sebelum menyalin file aplikasi, agar tidak konflik.
+Clone repository aplikasi langsung ke direktori web root:
+
+```bash
+git clone https://github.com/paknux/appServerMonAWS.git /var/www/html
+```
+
+Masuk ke direktori web root untuk memastikan file sudah tersalin dengan benar:
+
+```bash
+cd /var/www/html
+ls -la
+```
+
+> 💡 **Tips:** Menggunakan `git clone` lebih disarankan dibanding upload manual (WinSCP/`scp`) karena lebih cepat, konsisten, dan memudahkan update aplikasi di kemudian hari cukup dengan `git pull` tanpa perlu upload ulang seluruh file.
 
 ---
 
