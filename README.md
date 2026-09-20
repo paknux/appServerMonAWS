@@ -102,8 +102,6 @@ cd /var/www/html
 ls -la
 ```
 
-> 💡 **Tips:** Menggunakan `git clone` lebih disarankan dibanding upload manual (WinSCP/`scp`) karena lebih cepat, konsisten, dan memudahkan update aplikasi di kemudian hari cukup dengan `git pull` tanpa perlu upload ulang seluruh file.
-
 ---
 
 ## 3. Masuk ke Direktori Web Root
