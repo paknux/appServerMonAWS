@@ -80,7 +80,7 @@ apt install -y \
 
 ---
 
-## 2. Upload File Aplikasi ke Server
+## 2. Clone File Aplikasi dari Repositori ini ke Server Instance EC2
 
 Ambil source code aplikasi langsung dari repository GitHub menggunakan `git clone`.
 
